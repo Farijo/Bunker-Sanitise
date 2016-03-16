@@ -597,7 +597,7 @@
             for(int j=0;j<nbTriVertice;j++)
               point[j].color = ombre;
             triangulateShape(shapeList[i], point);
-            //window.draw(point, nbTriVertice, sf::Triangles);
+            window.draw(point, nbTriVertice, sf::Triangles);
           }
         }
       }
@@ -817,8 +817,8 @@
     bool angleType[angles.size()];
     Utility::ChainList ears;
     Utility::ChainList remainingVertices;
-    for(int i=0;i<angles.size();i++)
-      remainingVertices.push_back(i);
+    for(int i=angles.size()-1;i>=0;i--)
+      remainingVertices.push_front(i);
 
     int lastindex = angles.size()-1;
     angleType[0] = (angles[1].x-angles[0].x)*(angles[lastindex].y-angles[0].y) > (angles[lastindex].x-angles[0].x)*(angles[1].y-angles[0].y);
@@ -826,14 +826,14 @@
       angleType[i] = (angles[i+1].x-angles[i].x)*(angles[i-1].y-angles[i].y) > (angles[i-1].x-angles[i].x)*(angles[i+1].y-angles[i].y);
     angleType[lastindex] = (angles[0].x-angles[lastindex].x)*(angles[angles.size()-2].y-angles[lastindex].y) > (angles[angles.size()-2].x-angles[lastindex].x)*(angles[0].y-angles[lastindex].y);
 
-    for(unsigned int i=0;i<angles.size();i++)
+    for(int i=angles.size()-1;i>=0;i--)
     {
       if(angleType[i] == CONVEX)
       {
         int first = (i+2)%angles.size();
         int iprev = (i+angles.size()-1)%angles.size();
         int inext = (i+1)%angles.size();
-        ears.push_back(i);
+        ears.push_front(i);
         for(int j=first;j!=iprev;j=(j+1)%angles.size())
         {
           double x1, y1, x2, y2, x3, y3;
@@ -845,7 +845,7 @@
           y3 = angles[inext].y - angles[j].y;
           if((x1*y2 > x2*y1)&&(x2*y3 > x3*y2)&&(x3*y1 > x1*y3))
           {
-            ears.pop_back();
+            ears.pop_front();
             break;
           }
         }
@@ -857,16 +857,29 @@
       int actualVertices[remainingVertices.size];
       int deletetedVertice = remainingVertices.to_array(actualVertices, ears[0]);
 
+      int prevprevVertice = actualVertices[(deletetedVertice-2+remainingVertices.size)%remainingVertices.size];
       int prevVertice = deletetedVertice-1 < 0 ? actualVertices[remainingVertices.size-1] : actualVertices[deletetedVertice-1];
-      int nextVertice = deletetedVertice+1 == remainingVertices.size ? actualVertices[0] : actualVertices[deletetedVertice+1];
+      int nextVertice = deletetedVertice+1 == (int)remainingVertices.size ? actualVertices[0] : actualVertices[deletetedVertice+1];
+      int nextnextVertice = actualVertices[(deletetedVertice+2)%remainingVertices.size];
+
+      ears.pop_front();
+      remainingVertices.remove_element_at(deletetedVertice);
+
       verticeTrianguled[triActual++].position = angles[prevVertice];
       verticeTrianguled[triActual++].position = angles[actualVertices[deletetedVertice]];
       verticeTrianguled[triActual++].position = angles[nextVertice];
 
-      //check les sommets prevVertice et nextVertice;
+      /*if(angleType[prevVertice] == REFLEX)
+      {
+        angleType[prevVertice] = (angles[nextVertice].x-angles[prevVertice].x)*(angles[prevprevVertice].y-angles[prevVertice].y) > (angles[prevprevVertice].x-angles[prevVertice].x)*(angles[nextVertice].y-angles[prevVertice].y);
+      }
+      if(angleType[prevVertice] == CONVEX)
+      {
+        ears.remove_element(prevVertice);
+        ears.push_front(prevVertice);
+      }*/
 
-      ears.pop_front();
-      remainingVertices.remove_element_at(deletetedVertice);
+      //check les sommets prevVertice et nextVertice;
     }
 
     int actualVertices[remainingVertices.size];

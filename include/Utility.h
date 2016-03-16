@@ -12,7 +12,7 @@ class Utility
       struct Node* next;
 
       Node();
-      Node(int v);
+      Node(const int v);
     };
 
     struct ChainList
@@ -22,12 +22,12 @@ class Utility
 
       ChainList();
       virtual ~ChainList();
-      void push_back(int value);
+      void push_front(const int value);
       void pop_back();
       void pop_front();
-      void remove_element(int val);
-      void remove_element_at(unsigned int index);
-      int to_array(int* a, int val);
+      void remove_element(const int val);
+      void remove_element_at(const unsigned int index);
+      int to_array(int* a, const int val)const;
       int operator [](const int index)const;
     };
 
