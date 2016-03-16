@@ -813,10 +813,12 @@
   void Room::triangulateShape(const std::vector<sf::Vector2f>& angles, sf::Vertex* verticeTrianguled)
   {
     int triActual = 0;
-    const double PI = acos(-1);
     const bool REFLEX = false, CONVEX = true;
     bool angleType[angles.size()];
-    std::list<int> ears;
+    Utility::ChainList ears;
+    Utility::ChainList remainingVertices;
+    for(int i=0;i<angles.size();i++)
+      remainingVertices.push_back(i);
 
     int lastindex = angles.size()-1;
     angleType[0] = (angles[1].x-angles[0].x)*(angles[lastindex].y-angles[0].y) > (angles[lastindex].x-angles[0].x)*(angles[1].y-angles[0].y);
@@ -850,20 +852,27 @@
       }
     }
 
-    verticeTrianguled[triActual++].position = ears.front()-1 < 0 ? angles[lastindex] : angles[ears.front()-1];
-    verticeTrianguled[triActual++].position = angles[ears.front()];
-    verticeTrianguled[triActual++].position = ears.front()+1 > lastindex ? angles[0] : angles[ears.front()+1];
-    ears.pop_front();
-
-    Utility::ChainList c;
-
-    /*for(unsigned int i=0;i<angles.size();i++)
+    while(remainingVertices.size > 3)
     {
-      if(angleType[i])
-        printf("CONVEX %f %f\n",angles[i].x,angles[i].y);
-      else
-        printf("REFLEX %f %f\n",angles[i].x,angles[i].y);
+      int actualVertices[remainingVertices.size];
+      int deletetedVertice = remainingVertices.to_array(actualVertices, ears[0]);
+
+      int prevVertice = deletetedVertice-1 < 0 ? actualVertices[remainingVertices.size-1] : actualVertices[deletetedVertice-1];
+      int nextVertice = deletetedVertice+1 == remainingVertices.size ? actualVertices[0] : actualVertices[deletetedVertice+1];
+      verticeTrianguled[triActual++].position = angles[prevVertice];
+      verticeTrianguled[triActual++].position = angles[actualVertices[deletetedVertice]];
+      verticeTrianguled[triActual++].position = angles[nextVertice];
+
+      //check les sommets prevVertice et nextVertice;
+
+      ears.pop_front();
+      remainingVertices.remove_element_at(deletetedVertice);
     }
-    printf("\n\n");*/
+
+    int actualVertices[remainingVertices.size];
+    remainingVertices.to_array(actualVertices, 0);
+    verticeTrianguled[triActual++].position = angles[actualVertices[0]];
+    verticeTrianguled[triActual++].position = angles[actualVertices[1]];
+    verticeTrianguled[triActual++].position = angles[actualVertices[2]];
   }
 

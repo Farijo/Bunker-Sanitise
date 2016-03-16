@@ -10,10 +10,10 @@ Utility::ChainList::ChainList()
 Utility::ChainList::~ChainList()
 {
   while(size > 0)
-    remove_element_at(0);
+    pop_front();
 }
 
-void Utility::ChainList::puch_back(int value)
+void Utility::ChainList::push_back(int value)
 {
   Node** tmp = &first;
   while(*tmp)
@@ -21,6 +21,33 @@ void Utility::ChainList::puch_back(int value)
 
   *tmp = new Node(value);
   size++;
+}
+
+void Utility::ChainList::pop_back()
+{
+  remove_element_at(size-1);
+}
+
+void Utility::ChainList::pop_front()
+{
+  remove_element_at(0);
+}
+
+void Utility::ChainList::remove_element(int val)
+{
+  Node** tmp = &first;
+  while((*tmp)->value != val)
+  {
+    tmp = &((*tmp)->next);
+    if(!*tmp)
+      return;
+  }
+
+  Node* aux = *tmp;
+  *tmp = (*tmp)->next;
+  delete aux;
+
+  size--;
 }
 
 void Utility::ChainList::remove_element_at(unsigned int index)
@@ -66,6 +93,18 @@ int Utility::ChainList::operator [](const int index)const
     tmp = tmp->next;
   }
   return tmp->value;
+}
+
+int Utility::ChainList::to_array(int* a, int val)
+{
+  int res;
+  for(int i=0;i<size;i++)
+  {
+    a[i] = (*this)[i];
+    if(a[i] == val)
+      res = i;
+  }
+  return res;
 }
 
 Utility::Node::Node()
