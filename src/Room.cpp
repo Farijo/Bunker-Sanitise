@@ -869,7 +869,7 @@
       verticeTrianguled[triActual++].position = angles[actualVertices[deletetedVertice]];
       verticeTrianguled[triActual++].position = angles[nextVertice];
 
-      /*if(angleType[prevVertice] == REFLEX)
+      if(angleType[prevVertice] == REFLEX)
       {
         angleType[prevVertice] = (angles[nextVertice].x-angles[prevVertice].x)*(angles[prevprevVertice].y-angles[prevVertice].y) > (angles[prevprevVertice].x-angles[prevVertice].x)*(angles[nextVertice].y-angles[prevVertice].y);
       }
@@ -877,9 +877,11 @@
       {
         ears.remove_element(prevVertice);
         ears.push_front(prevVertice);
-      }*/
 
-      //check les sommets prevVertice et nextVertice;
+        //parcourir tous les sommets de actualVertices pour déterminer si au moins un est dans le triangle  | prevprevVertice - prevVertice - nextVertice |
+      }
+
+      //check le sommet nextVertice de la même manière que prevVertice juste avant
     }
 
     int actualVertices[remainingVertices.size];
