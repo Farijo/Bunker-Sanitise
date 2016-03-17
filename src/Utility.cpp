@@ -32,14 +32,20 @@ void Utility::ChainList::pop_front()
   remove_element_at(0);
 }
 
-void Utility::ChainList::remove_element(const int val)
+int Utility::ChainList::remove_element(const int val)
 {
+  if(!first)
+    return -1;
+
+  int valIndex = 0;
+
   Node** tmp = &first;
   while((*tmp)->value != val)
   {
     tmp = &((*tmp)->next);
+    valIndex++;
     if(!*tmp)
-      return;
+      return -1;
   }
 
   Node* aux = *tmp;
@@ -47,6 +53,8 @@ void Utility::ChainList::remove_element(const int val)
   delete aux;
 
   size--;
+
+  return valIndex;
 }
 
 void Utility::ChainList::remove_element_at(const unsigned int index)
@@ -94,16 +102,10 @@ int Utility::ChainList::operator [](const int index)const
   return tmp->value;
 }
 
-int Utility::ChainList::to_array(int* a, const int val)const
+void Utility::ChainList::to_array(int* a)const
 {
-  int res;
   for(unsigned int i=0;i<size;i++)
-  {
     a[i] = (*this)[i];
-    if(a[i] == val)
-      res = i;
-  }
-  return res;
 }
 
 Utility::Node::Node()

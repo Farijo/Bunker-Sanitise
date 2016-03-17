@@ -25,9 +25,9 @@ class Utility
       void push_front(const int value);
       void pop_back();
       void pop_front();
-      void remove_element(const int val);
+      int remove_element(const int val);
       void remove_element_at(const unsigned int index);
-      int to_array(int* a, const int val)const;
+      void to_array(int* a)const;
       int operator [](const int index)const;
     };
 
