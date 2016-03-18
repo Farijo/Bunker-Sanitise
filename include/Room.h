@@ -54,6 +54,7 @@ class Room
         virtual ~Room();
 
         void generateRandomRoom();
+        void loadSpecificRoom();
         void resetPath();
         void pathTo(const int x, const int y);
         void drawShape(sf::RenderWindow& window)const;

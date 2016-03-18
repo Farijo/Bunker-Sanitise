@@ -378,6 +378,52 @@
           vertices.push_back(sf::Vector2u(corner[i][0],i));
         }
       }
+
+      loadSpecificRoom();
+  }
+
+  void Room::loadSpecificRoom()
+  {
+    hauteur = 4;
+    largeur = 4;
+
+    roomArchitecture = new directions *[hauteur];
+    for(int i=0;i<hauteur;i++)
+    {
+        roomArchitecture[i] = new directions[largeur];
+        for(int j=0;j<largeur;j++)
+            roomArchitecture[i][j]=INACCESSIBLE;
+    }
+
+    roomArchitecture[0][0] = UNSET;
+    roomArchitecture[0][1] = UNSET;
+    roomArchitecture[0][2] = UNSET;
+    roomArchitecture[0][3] = UNSET;
+
+    roomArchitecture[1][1] = UNSET;
+    roomArchitecture[1][2] = UNSET;
+    roomArchitecture[1][3] = UNSET;
+
+    roomArchitecture[2][2] = UNSET;
+    roomArchitecture[2][3] = UNSET;
+
+    roomArchitecture[3][0] = UNSET;
+    roomArchitecture[3][1] = UNSET;
+
+    vertices.clear();
+    vertices.push_back(sf::Vector2u(4,0));
+    vertices.push_back(sf::Vector2u(4,3));
+    vertices.push_back(sf::Vector2u(2,3));
+    vertices.push_back(sf::Vector2u(2,4));
+    vertices.push_back(sf::Vector2u(0,4));
+    vertices.push_back(sf::Vector2u(0,3));
+    vertices.push_back(sf::Vector2u(2,3));
+    vertices.push_back(sf::Vector2u(2,2));
+    vertices.push_back(sf::Vector2u(1,2));
+    vertices.push_back(sf::Vector2u(1,1));
+    vertices.push_back(sf::Vector2u(0,1));
+    vertices.push_back(sf::Vector2u(0,0));
+
   }
 
   void Room::resetPath()
@@ -844,18 +890,20 @@
     }
 
     bool affichage = false;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) affichage = true;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))affichage=true;
+
     if(affichage)printf("\n\n");
     while(remainingVertices.size > 3)
     {
-      if(affichage)printf("delete : %d\n",ears[0]);
       const int deletetedVertice = remainingVertices.remove_element(ears[0]);
+      if(triActual == (angles.size()-2)*3)return;
       verticeTrianguled[triActual++].position = angles[ears[0]];
       ears.pop_front();
       if(deletetedVertice==-1)
       {
         continue;
       }
+      if(affichage)printf("delete : %d\n",ears[0]);
 
       int actualVertices[remainingVertices.size];
       remainingVertices.to_array(actualVertices);
