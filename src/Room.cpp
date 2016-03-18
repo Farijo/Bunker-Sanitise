@@ -834,14 +834,7 @@
         ears.push_front(i);
         for(int j=first;j!=iprev;j=(j+1)%angles.size())
         {
-          double x1, y1, x2, y2, x3, y3;
-          x1 = angles[iprev].x - angles[j].x;
-          y1 = angles[iprev].y - angles[j].y;
-          x2 = angles[i].x - angles[j].x;
-          y2 = angles[i].y - angles[j].y;
-          x3 = angles[inext].x - angles[j].x;
-          y3 = angles[inext].y - angles[j].y;
-          if((x1*y2 > x2*y1)&&(x2*y3 > x3*y2)&&(x3*y1 > x1*y3))
+          if(isInTriangle(angles[j], angles[iprev], angles[i], angles[inext]))
           {
             ears.pop_front();
             break;
@@ -871,26 +864,18 @@
       verticeTrianguled[triActual++].position = angles[actualVertices[prevVertice]];
       verticeTrianguled[triActual++].position = angles[actualVertices[nextVertice]];
 
-      if(angleType[prevVertice] == REFLEX)
+      if(angleType[actualVertices[prevVertice]] == REFLEX)
       {
-        angleType[prevVertice] = (angles[nextVertice].x-angles[prevVertice].x)*(angles[prevprevVertice].y-angles[prevVertice].y) > (angles[prevprevVertice].x-angles[prevVertice].x)*(angles[nextVertice].y-angles[prevVertice].y);
+        angleType[actualVertices[prevVertice]] = (angles[actualVertices[nextVertice]].x-angles[actualVertices[prevVertice]].x)*(angles[actualVertices[prevprevVertice]].y-angles[actualVertices[prevVertice]].y) > (angles[actualVertices[prevprevVertice]].x-angles[actualVertices[prevVertice]].x)*(angles[actualVertices[nextVertice]].y-angles[actualVertices[prevVertice]].y);
       }
-      if(angleType[prevVertice] == CONVEX)
+      if(angleType[actualVertices[prevVertice]] == CONVEX)
       {
-        ears.remove_element(actualVertices[prevprevVertice]);
-        ears.push_front(actualVertices[prevprevVertice]);
+        ears.remove_element(actualVertices[prevVertice]);
+        ears.push_front(actualVertices[prevVertice]);
 
-        ///parcourir tous les sommets de actualVertices pour déterminer si au moins un est dans le triangle  | prevprevVertice - prevVertice - nextVertice |
         for(int j=nextnextVertice;j!=prevprevVertice;j=(j+1)%remainingVertices.size)
         {
-          double x1, y1, x2, y2, x3, y3;
-          x1 = angles[actualVertices[prevprevVertice]].x - angles[actualVertices[j]].x;
-          y1 = angles[actualVertices[prevprevVertice]].y - angles[actualVertices[j]].y;
-          x2 = angles[actualVertices[prevVertice]].x - angles[actualVertices[j]].x;
-          y2 = angles[actualVertices[prevVertice]].y - angles[actualVertices[j]].y;
-          x3 = angles[actualVertices[nextVertice]].x - angles[actualVertices[j]].x;
-          y3 = angles[actualVertices[nextVertice]].y - angles[actualVertices[j]].y;
-          if((x1*y2 > x2*y1)&&(x2*y3 > x3*y2)&&(x3*y1 > x1*y3))
+          if(isInTriangle(angles[actualVertices[j]], angles[actualVertices[prevprevVertice]], angles[actualVertices[prevVertice]], angles[actualVertices[nextVertice]]))
           {
             ears.pop_front();
             break;
@@ -899,36 +884,24 @@
       }
 
 
-      if(angleType[nextVertice] == REFLEX)
+      if(angleType[actualVertices[nextVertice]] == REFLEX)
       {
-        angleType[nextVertice] = (angles[nextnextVertice].x-angles[nextVertice].x)*(angles[prevVertice].y-angles[nextVertice].y) > (angles[prevVertice].x-angles[nextVertice].x)*(angles[nextnextVertice].y-angles[nextVertice].y);
+        angleType[actualVertices[nextVertice]] = (angles[actualVertices[nextnextVertice]].x-angles[actualVertices[nextVertice]].x)*(angles[actualVertices[prevVertice]].y-angles[actualVertices[nextVertice]].y) > (angles[actualVertices[prevVertice]].x-angles[actualVertices[nextVertice]].x)*(angles[actualVertices[nextnextVertice]].y-angles[actualVertices[nextVertice]].y);
       }
-      if(angleType[nextVertice] == CONVEX)
+      if(angleType[actualVertices[nextVertice]] == CONVEX)
       {
         ears.remove_element(actualVertices[nextVertice]);
         ears.push_front(actualVertices[nextVertice]);
 
-        ///parcourir tous les sommets de actualVertices pour déterminer si au moins un est dans le triangle  | prevVertice - nextVertice - nextnextVertice |
         for(int j=(nextnextVertice+1)%remainingVertices.size;j!=prevVertice;j=(j+1)%remainingVertices.size)
         {
-          double x1, y1, x2, y2, x3, y3;
-          x1 = angles[actualVertices[prevVertice]].x - angles[actualVertices[j]].x;
-          y1 = angles[actualVertices[prevVertice]].y - angles[actualVertices[j]].y;
-          x2 = angles[actualVertices[nextVertice]].x - angles[actualVertices[j]].x;
-          y2 = angles[actualVertices[nextVertice]].y - angles[actualVertices[j]].y;
-          x3 = angles[actualVertices[nextnextVertice]].x - angles[actualVertices[j]].x;
-          y3 = angles[actualVertices[nextnextVertice]].y - angles[actualVertices[j]].y;
-          if((x1*y2 > x2*y1)&&(x2*y3 > x3*y2)&&(x3*y1 > x1*y3))
+          if(isInTriangle(angles[actualVertices[j]], angles[actualVertices[prevVertice]], angles[actualVertices[nextVertice]], angles[actualVertices[nextnextVertice]]))
           {
             ears.pop_front();
             break;
           }
         }
       }
-
-
-
-      //check le sommet nextVertice de la même manière que prevVertice juste avant
     }
 
     int actualVertices[remainingVertices.size];
@@ -936,5 +909,18 @@
     verticeTrianguled[triActual++].position = angles[actualVertices[0]];
     verticeTrianguled[triActual++].position = angles[actualVertices[1]];
     verticeTrianguled[triActual++].position = angles[actualVertices[2]];
+  }
+
+  bool Room::isInTriangle(const sf::Vector2f point, const sf::Vector2f t1, const sf::Vector2f t2, const sf::Vector2f t3)
+  {
+    double x1, y1, x2, y2, x3, y3;
+    x1 = t1.x - point.x;
+    y1 = t1.y - point.y;
+    x2 = t2.x - point.x;
+    y2 = t2.y - point.y;
+    x3 = t3.x - point.x;
+    y3 = t3.y - point.y;
+
+    return (x1*y2 > x2*y1)&&(x2*y3 > x3*y2)&&(x3*y1 > x1*y3);
   }
 
