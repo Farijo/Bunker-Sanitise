@@ -925,6 +925,6 @@
     x3 = t3.x - point.x;
     y3 = t3.y - point.y;
 
-    return (x1*y2 > x2*y1)&&(x2*y3 > x3*y2)&&(x3*y1 > x1*y3);
+    return (x1*y2 >= x2*y1)&&(x2*y3 >= x3*y2)&&(x3*y1 >= x1*y3);
   }
 
