@@ -834,7 +834,7 @@
         ears.push_front(i);
         for(int j=first;j!=iprev;j=(j+1)%angles.size())
         {
-          if(isInTriangle(angles[j], angles[iprev], angles[i], angles[inext]))
+          if(isPointInTriangle(angles[j], angles[iprev], angles[i], angles[inext]))
           {
             ears.pop_front();
             break;
@@ -843,8 +843,12 @@
       }
     }
 
+    bool affichage = false;
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) affichage = true;
+    if(affichage)printf("\n\n");
     while(remainingVertices.size > 3)
     {
+      if(affichage)printf("delete : %d\n",ears[0]);
       const int deletetedVertice = remainingVertices.remove_element(ears[0]);
       verticeTrianguled[triActual++].position = angles[ears[0]];
       ears.pop_front();
@@ -875,7 +879,7 @@
 
         for(int j=nextnextVertice;j!=prevprevVertice;j=(j+1)%remainingVertices.size)
         {
-          if(isInTriangle(angles[actualVertices[j]], angles[actualVertices[prevprevVertice]], angles[actualVertices[prevVertice]], angles[actualVertices[nextVertice]]))
+          if(isPointInTriangle(angles[actualVertices[j]], angles[actualVertices[prevprevVertice]], angles[actualVertices[prevVertice]], angles[actualVertices[nextVertice]]))
           {
             ears.pop_front();
             break;
@@ -895,7 +899,7 @@
 
         for(int j=(nextnextVertice+1)%remainingVertices.size;j!=prevVertice;j=(j+1)%remainingVertices.size)
         {
-          if(isInTriangle(angles[actualVertices[j]], angles[actualVertices[prevVertice]], angles[actualVertices[nextVertice]], angles[actualVertices[nextnextVertice]]))
+          if(isPointInTriangle(angles[actualVertices[j]], angles[actualVertices[prevVertice]], angles[actualVertices[nextVertice]], angles[actualVertices[nextnextVertice]]))
           {
             ears.pop_front();
             break;
@@ -911,7 +915,7 @@
     verticeTrianguled[triActual++].position = angles[actualVertices[2]];
   }
 
-  bool Room::isInTriangle(const sf::Vector2f point, const sf::Vector2f t1, const sf::Vector2f t2, const sf::Vector2f t3)
+  bool Room::isPointInTriangle(const sf::Vector2f point, const sf::Vector2f t1, const sf::Vector2f t2, const sf::Vector2f t3)
   {
     double x1, y1, x2, y2, x3, y3;
     x1 = t1.x - point.x;

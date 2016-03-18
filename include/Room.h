@@ -67,7 +67,7 @@ class Room
         static std::vector<std::vector<sf::Vector2f> > polygonList(const sf::Vector2f* vertex, const bool* vertexLight, const int nbVertex);
         static std::vector<sf::Vector2f> collisionGestion(const unsigned int length, const std::vector<struct IntersectionPoint>* intersectionList);
         static void triangulateShape(const std::vector<sf::Vector2f>& angles, sf::Vertex* verticeTrianguled);
-        static bool isInTriangle(const sf::Vector2f point, const sf::Vector2f t1, const sf::Vector2f t2, const sf::Vector2f t3);
+        static bool isPointInTriangle(const sf::Vector2f point, const sf::Vector2f t1, const sf::Vector2f t2, const sf::Vector2f t3);
 
         sf::Texture* tex;
         int hauteur;
