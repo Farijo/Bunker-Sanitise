@@ -3,13 +3,13 @@
 
 Utility::ChainList::ChainList()
 {
-  size = 0;
+  length = 0;
   first = nullptr;
 }
 
 Utility::ChainList::~ChainList()
 {
-  while(size > 0)
+  while(!empty())
     pop_front();
 }
 
@@ -19,17 +19,35 @@ void Utility::ChainList::push_front(const int value)
   first = new Node(value);
   first->next = tmp;
 
-  size++;
+  length++;
 }
 
 void Utility::ChainList::pop_back()
 {
-  remove_element_at(size-1);
+  remove_element_at(length-1);
 }
 
 void Utility::ChainList::pop_front()
 {
   remove_element_at(0);
+}
+
+int Utility::ChainList::front()const
+{
+  if((!first)||(empty()))
+    return -1;
+
+  return first->value;
+}
+
+unsigned int Utility::ChainList::size()const
+{
+  return length;
+}
+
+bool Utility::ChainList::empty()const
+{
+  return length == 0;
 }
 
 int Utility::ChainList::remove_element(const int val)
@@ -52,14 +70,14 @@ int Utility::ChainList::remove_element(const int val)
   *tmp = (*tmp)->next;
   delete aux;
 
-  size--;
+  length--;
 
   return valIndex;
 }
 
 void Utility::ChainList::remove_element_at(const unsigned int index)
 {
-  if(index >= size)
+  if(index >= length)
     return;
 
   Node** tmp = &first;
@@ -74,23 +92,23 @@ void Utility::ChainList::remove_element_at(const unsigned int index)
   *tmp = (*tmp)->next;
   delete aux;
 
-  size--;
+  length--;
 }
 
 int Utility::ChainList::operator [](const int index)const
 {
   Node* tmp = first;
 
-  if((!tmp)||(size == 0))
+  if((!tmp)||(empty()))
     return -1;
 
   int delta, cyclicalIndex=index;
   if(index<0)
-    delta = size;
-  else if(index >= (int)size)
-    delta = -size;
+    delta = length;
+  else if(index >= (int)length)
+    delta = -length;
 
-  while((cyclicalIndex<0)||((int)size<=cyclicalIndex))
+  while((cyclicalIndex<0)||((int)length<=cyclicalIndex))
     cyclicalIndex += delta;
 
   for(int i=0;i<cyclicalIndex;i++)
@@ -104,7 +122,7 @@ int Utility::ChainList::operator [](const int index)const
 
 void Utility::ChainList::to_array(int* a)const
 {
-  for(unsigned int i=0;i<size;i++)
+  for(unsigned int i=0;i<length;i++)
     a[i] = (*this)[i];
 }
 

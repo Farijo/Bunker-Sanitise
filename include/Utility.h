@@ -17,14 +17,19 @@ class Utility
 
     struct ChainList
     {
-      unsigned int size;
+      private:
+      unsigned int length;
       struct Node* first;
 
+      public:
       ChainList();
       virtual ~ChainList();
       void push_front(const int value);
       void pop_back();
       void pop_front();
+      int front()const;
+      unsigned int size()const;
+      bool empty()const;
       int remove_element(const int val);
       void remove_element_at(const unsigned int index);
       void to_array(int* a)const;

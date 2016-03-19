@@ -534,7 +534,7 @@
       static bool left, right, up, down;
 
       sf::Vector2f mouse_pos = window.mapPixelToCoords(sf::Mouse::getPosition(window), window.getView());
-      //mouse_pos = sf::Vector2f(mousx, mousy);
+      mouse_pos = sf::Vector2f(mousx, mousy);
       //printf("%f %f\n",mouse_pos.x,mouse_pos.y);
 
       if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){left=true;}
@@ -616,8 +616,20 @@
           {
             allVertex[i] = wall[beginRoomPoints].extremity2;
             sf::Vector2f diff = allVertex[i]-allVertex[i-1];
-            vertexEnlightened[i] = fabs(diff.x)<epsilon && fabs(diff.y)<epsilon;
+            if(fabs(diff.x)<epsilon && fabs(diff.y)<epsilon)
+              i--;
+            else
+              vertexEnlightened[i] = false;
             beginRoomPoints = (beginRoomPoints+1)%vertices.size();
+          }
+          if(i>ver.size())
+          {
+            sf::Vector2f diff = allVertex[0]-allVertex[i];
+            if(fabs(diff.x)<epsilon && fabs(diff.y)<epsilon)
+            {
+              numAllVertex=i;
+              break;
+            }
           }
         }
 
@@ -889,29 +901,20 @@
       }
     }
 
-    bool affichage = false;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))affichage=true;
-
-    if(affichage)printf("\n\n");
-    while((remainingVertices.size > 3)&&(triActual < (angles.size()-2)*3))
+    while((remainingVertices.size() > 3)&&(!ears.empty()))
     {
-      const int deletetedVertice = remainingVertices.remove_element(ears[0]);
-      verticeTrianguled[triActual++].position = angles[ears[0]];
+      const int deletetedVertice = remainingVertices.remove_element(ears.front());
+      verticeTrianguled[triActual++].position = angles[ears.front()];
       ears.pop_front();
-      if(deletetedVertice==-1)
-      {
-        continue;
-      }
-      if(affichage)printf("delete : %d\n",ears[0]);
 
-      int actualVertices[remainingVertices.size];
+      int actualVertices[remainingVertices.size()];
       remainingVertices.to_array(actualVertices);
 
 
-      const int prevprevVertice = (deletetedVertice-2+remainingVertices.size)%remainingVertices.size;
-      const int prevVertice = deletetedVertice-1 < 0 ? remainingVertices.size-1 : deletetedVertice-1;
-      const int nextVertice = deletetedVertice == (int)remainingVertices.size ? 0 : deletetedVertice;
-      const int nextnextVertice = (deletetedVertice+1)%remainingVertices.size;
+      const int prevprevVertice = (deletetedVertice-2+remainingVertices.size())%remainingVertices.size();
+      const int prevVertice = deletetedVertice-1 < 0 ? remainingVertices.size()-1 : deletetedVertice-1;
+      const int nextVertice = deletetedVertice == (int)remainingVertices.size() ? 0 : deletetedVertice;
+      const int nextnextVertice = (deletetedVertice+1)%remainingVertices.size();
 
       verticeTrianguled[triActual++].position = angles[actualVertices[prevVertice]];
       verticeTrianguled[triActual++].position = angles[actualVertices[nextVertice]];
@@ -925,7 +928,7 @@
         ears.remove_element(actualVertices[prevVertice]);
         ears.push_front(actualVertices[prevVertice]);
 
-        for(int j=nextnextVertice;j!=prevprevVertice;j=(j+1)%remainingVertices.size)
+        for(int j=nextnextVertice;j!=prevprevVertice;j=(j+1)%remainingVertices.size())
         {
           if(isPointInTriangle(angles[actualVertices[j]], angles[actualVertices[prevprevVertice]], angles[actualVertices[prevVertice]], angles[actualVertices[nextVertice]]))
           {
@@ -945,7 +948,7 @@
         ears.remove_element(actualVertices[nextVertice]);
         ears.push_front(actualVertices[nextVertice]);
 
-        for(int j=(nextnextVertice+1)%remainingVertices.size;j!=prevVertice;j=(j+1)%remainingVertices.size)
+        for(int j=(nextnextVertice+1)%remainingVertices.size();j!=prevVertice;j=(j+1)%remainingVertices.size())
         {
           if(isPointInTriangle(angles[actualVertices[j]], angles[actualVertices[prevVertice]], angles[actualVertices[nextVertice]], angles[actualVertices[nextnextVertice]]))
           {
@@ -956,7 +959,7 @@
       }
     }
 
-    int actualVertices[remainingVertices.size];
+    int actualVertices[remainingVertices.size()];
     remainingVertices.to_array(actualVertices);
     verticeTrianguled[triActual++].position = angles[actualVertices[0]];
     verticeTrianguled[triActual++].position = angles[actualVertices[1]];
