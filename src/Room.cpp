@@ -424,6 +424,64 @@
     vertices.push_back(sf::Vector2u(0,1));
     vertices.push_back(sf::Vector2u(0,0));
 
+    /*roomArchitecture[0][0] = UNSET;
+    roomArchitecture[0][1] = UNSET;
+
+    roomArchitecture[1][2] = UNSET;
+    roomArchitecture[1][3] = UNSET;
+
+    roomArchitecture[2][0] = UNSET;
+    roomArchitecture[2][1] = UNSET;
+
+    roomArchitecture[3][2] = UNSET;
+    roomArchitecture[3][3] = UNSET;
+
+    vertices.clear();
+    vertices.push_back(sf::Vector2u(2,0));
+    vertices.push_back(sf::Vector2u(2,1));
+    vertices.push_back(sf::Vector2u(4,1));
+    vertices.push_back(sf::Vector2u(4,2));
+    vertices.push_back(sf::Vector2u(2,2));
+    vertices.push_back(sf::Vector2u(2,3));
+    vertices.push_back(sf::Vector2u(4,3));
+    vertices.push_back(sf::Vector2u(4,4));
+
+    vertices.push_back(sf::Vector2u(2,4));
+    vertices.push_back(sf::Vector2u(2,3));
+    vertices.push_back(sf::Vector2u(0,3));
+    vertices.push_back(sf::Vector2u(0,2));
+    vertices.push_back(sf::Vector2u(2,2));
+    vertices.push_back(sf::Vector2u(2,1));
+    vertices.push_back(sf::Vector2u(0,1));
+    vertices.push_back(sf::Vector2u(0,0));*/
+
+    /*roomArchitecture[0][0] = UNSET;
+    roomArchitecture[0][1] = UNSET;
+    roomArchitecture[0][2] = UNSET;
+    roomArchitecture[0][3] = UNSET;
+
+    roomArchitecture[1][1] = UNSET;
+    roomArchitecture[1][2] = UNSET;
+
+    roomArchitecture[2][0] = UNSET;
+    roomArchitecture[2][1] = UNSET;
+    roomArchitecture[2][2] = UNSET;
+    roomArchitecture[2][3] = UNSET;
+
+    vertices.clear();
+    vertices.push_back(sf::Vector2u(4,0));
+    vertices.push_back(sf::Vector2u(4,1));
+    vertices.push_back(sf::Vector2u(3,1));
+    vertices.push_back(sf::Vector2u(3,2));
+    vertices.push_back(sf::Vector2u(4,2));
+    vertices.push_back(sf::Vector2u(4,3));
+
+    vertices.push_back(sf::Vector2u(0,3));
+    vertices.push_back(sf::Vector2u(0,2));
+    vertices.push_back(sf::Vector2u(1,2));
+    vertices.push_back(sf::Vector2u(1,1));
+    vertices.push_back(sf::Vector2u(0,1));
+    vertices.push_back(sf::Vector2u(0,0));*/
   }
 
   void Room::resetPath()
