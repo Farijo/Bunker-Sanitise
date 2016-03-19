@@ -893,10 +893,9 @@
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))affichage=true;
 
     if(affichage)printf("\n\n");
-    while(remainingVertices.size > 3)
+    while((remainingVertices.size > 3)&&(triActual < (angles.size()-2)*3))
     {
       const int deletetedVertice = remainingVertices.remove_element(ears[0]);
-      if(triActual == (angles.size()-2)*3)return;
       verticeTrianguled[triActual++].position = angles[ears[0]];
       ears.pop_front();
       if(deletetedVertice==-1)
@@ -907,6 +906,7 @@
 
       int actualVertices[remainingVertices.size];
       remainingVertices.to_array(actualVertices);
+
 
       const int prevprevVertice = (deletetedVertice-2+remainingVertices.size)%remainingVertices.size;
       const int prevVertice = deletetedVertice-1 < 0 ? remainingVertices.size-1 : deletetedVertice-1;
