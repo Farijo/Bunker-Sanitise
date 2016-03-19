@@ -617,6 +617,12 @@
       {
         std::vector<sf::Vector2f> ver = triangleCorner(mouse_pos, realSizeVertex, wall);
 
+        /*sf::CircleShape ss(10);
+        ss.setOrigin(10,10);
+        ss.setPosition(mouse_pos);
+        ss.setFillColor(sf::Color::Blue);
+        window.draw(ss);*/
+
         int fanSize = ver.size()+2;
 
         sf::CircleShape ss(10);
@@ -644,9 +650,7 @@
         }
         window.draw(linesd, ver.size()*2, sf::Lines);
 
-        // TODO trianguler à partir d'ici !
-
-        int beginRoomPoints, beginLightPoints = 1, numAllVertex = vertices.size()+ver.size();
+        unsigned int beginRoomPoints, beginLightPoints = 1, numAllVertex = vertices.size()+ver.size();
         sf::Vector2f allVertex[numAllVertex];
         bool vertexEnlightened[numAllVertex];
 
@@ -662,7 +666,7 @@
         allVertex[0] = ver[0];
         vertexEnlightened[0] = true;
 
-        for(int i=1;i<numAllVertex;i++)
+        for(unsigned int i=1;i<numAllVertex;i++)
         {
           if(wall[beginRoomPoints].pointBelongToEquation(ver[beginLightPoints]))
           {
@@ -926,15 +930,13 @@
 
   void Room::triangulateShape(const std::vector<sf::Vector2f>& angles, sf::Vertex* verticeTrianguled)
   {
-    int triActual = 0;
     const bool REFLEX = false, CONVEX = true;
     bool angleType[angles.size()];
-    Utility::ChainList ears;
-    Utility::ChainList remainingVertices;
+    Utility::ChainList ears, remainingVertices;
     for(int i=angles.size()-1;i>=0;i--)
       remainingVertices.push_front(i);
 
-    int lastindex = angles.size()-1;
+    const int lastindex = angles.size()-1;
     angleType[0] = (angles[1].x-angles[0].x)*(angles[lastindex].y-angles[0].y) > (angles[lastindex].x-angles[0].x)*(angles[1].y-angles[0].y);
     for(int i=1;i<lastindex;i++)
       angleType[i] = (angles[i+1].x-angles[i].x)*(angles[i-1].y-angles[i].y) > (angles[i-1].x-angles[i].x)*(angles[i+1].y-angles[i].y);
@@ -944,9 +946,9 @@
     {
       if(angleType[i] == CONVEX)
       {
-        int first = (i+2)%angles.size();
-        int iprev = (i+angles.size()-1)%angles.size();
-        int inext = (i+1)%angles.size();
+        const int first = (i+2)%angles.size();
+        const int iprev = (i+angles.size()-1)%angles.size();
+        const int inext = (i+1)%angles.size();
         ears.push_front(i);
         for(int j=first;j!=iprev;j=(j+1)%angles.size())
         {
@@ -959,6 +961,7 @@
       }
     }
 
+    int triActual = 0;
     while((remainingVertices.size() > 3)&&(!ears.empty()))
     {
       const int deletetedVertice = remainingVertices.remove_element(ears.front());
