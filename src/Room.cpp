@@ -961,9 +961,15 @@
       }
     }
 
+    bool affichage = false;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){affichage=true;}
+    if(affichage)printf("\n\n");
+    if(affichage)printf("SIZE %d\n",remainingVertices.size());
+
     int triActual = 0;
     while((remainingVertices.size() > 3)&&(!ears.empty()))
     {
+      if(affichage)printf("%d\n",ears.front());
       const int deletetedVertice = remainingVertices.remove_element(ears.front());
       verticeTrianguled[triActual++].position = angles[ears.front()];
       ears.pop_front();
@@ -1020,11 +1026,19 @@
       }
     }
 
-    int actualVertices[remainingVertices.size()];
-    remainingVertices.to_array(actualVertices);
-    verticeTrianguled[triActual++].position = angles[actualVertices[0]];
-    verticeTrianguled[triActual++].position = angles[actualVertices[1]];
-    verticeTrianguled[triActual++].position = angles[actualVertices[2]];
+    if(affichage)printf("SIZE %d\n",remainingVertices.size());
+    if(remainingVertices.size() == 3)
+    {
+      int actualVertices[remainingVertices.size()];
+      remainingVertices.to_array(actualVertices);
+      verticeTrianguled[triActual++].position = angles[actualVertices[0]];
+      verticeTrianguled[triActual++].position = angles[actualVertices[1]];
+      verticeTrianguled[triActual++].position = angles[actualVertices[2]];
+    }
+    else  // Le polygone n'a plus d'oreille
+    {
+
+    }
   }
 
   bool Room::isPointInTriangle(const sf::Vector2f point, const sf::Vector2f t1, const sf::Vector2f t2, const sf::Vector2f t3)
