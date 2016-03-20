@@ -9,8 +9,11 @@ Utility::ChainList::ChainList()
 
 Utility::ChainList::~ChainList()
 {
-  while(!empty())
-    pop_front();
+  if(first)
+  {
+    first->deleteNodeChain();
+    delete first;
+  }
 }
 
 void Utility::ChainList::push_front(const int value)
@@ -135,6 +138,15 @@ Utility::Node::Node(const int v)
 {
   value = v;
   next = nullptr;
+}
+
+void Utility::Node::deleteNodeChain()
+{
+  if(next)
+  {
+    next->deleteNodeChain();
+    delete next;
+  }
 }
 
 Utility::Utility()

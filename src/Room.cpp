@@ -964,12 +964,13 @@
     bool affichage = false;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){affichage=true;}
     if(affichage)printf("\n\n");
-    if(affichage)printf("SIZE %d\n",remainingVertices.size());
 
     int triActual = 0;
     while((remainingVertices.size() > 3)&&(!ears.empty()))
     {
-      if(affichage)printf("%d\n",ears.front());
+      for(int i=0;i<remainingVertices.size();i++)
+        if(affichage)printf("%d %d , ",remainingVertices[i], angleType[remainingVertices[i]]);
+      if(affichage)printf("\n");
       const int deletetedVertice = remainingVertices.remove_element(ears.front());
       verticeTrianguled[triActual++].position = angles[ears.front()];
       ears.pop_front();
@@ -1026,7 +1027,6 @@
       }
     }
 
-    if(affichage)printf("SIZE %d\n",remainingVertices.size());
     if(remainingVertices.size() == 3)
     {
       int actualVertices[remainingVertices.size()];
@@ -1035,7 +1035,7 @@
       verticeTrianguled[triActual++].position = angles[actualVertices[1]];
       verticeTrianguled[triActual++].position = angles[actualVertices[2]];
     }
-    else  // Le polygone n'a plus d'oreille
+    else  // Le polygone n'a plus d'oreille, faire une fonction qui divise les vertices restant en plusieurs polygones
     {
 
     }

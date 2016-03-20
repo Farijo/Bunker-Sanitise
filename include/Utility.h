@@ -13,6 +13,7 @@ class Utility
 
       Node();
       Node(const int v);
+      void deleteNodeChain();
     };
 
     struct ChainList
