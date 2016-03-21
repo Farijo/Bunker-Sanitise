@@ -714,7 +714,9 @@
             sf::Vertex point[nbTriVertice];
             for(int j=0;j<nbTriVertice;j++)
               point[j].color = j/3 == 0 ? sf::Color(100,0,0,200) : j/3 == 1 ? sf::Color(0,100,0,200) : j/3 == 2 ? sf::Color(0,0,100,200) : j/3 == 3 ? sf::Color(100,0,100,200) : j/3 == 4 ? sf::Color(0,100,100,200) : sf::Color(100,100,0,200);
-            triangulateShape(shapeList[i], point);
+            printf("%d ",nbTriVertice);
+            nbTriVertice = triangulateShape(shapeList[i], point);
+            printf("%d\n",nbTriVertice);
             window.draw(point, nbTriVertice, sf::Triangles);
           }
         }
@@ -928,7 +930,7 @@
     return win.contains(intPoint)&&(roomArchitecture[(intPoint.y)/size_y][(intPoint.x)/size_x] != INACCESSIBLE);
   }
 
-  void Room::triangulateShape(const std::vector<sf::Vector2f>& angles, sf::Vertex* verticeTrianguled)
+  int Room::triangulateShape(const std::vector<sf::Vector2f>& angles, sf::Vertex* verticeTrianguled)
   {
     const bool REFLEX = false, CONVEX = true;
     bool angleType[angles.size()];
@@ -961,16 +963,9 @@
       }
     }
 
-    bool affichage = false;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)){affichage=true;}
-    if(affichage)printf("\n\n");
-
     int triActual = 0;
     while((remainingVertices.size() > 3)&&(!ears.empty()))
     {
-      for(int i=0;i<remainingVertices.size();i++)
-        if(affichage)printf("%d %d , ",remainingVertices[i], angleType[remainingVertices[i]]);
-      if(affichage)printf("\n");
       const int deletetedVertice = remainingVertices.remove_element(ears.front());
       verticeTrianguled[triActual++].position = angles[ears.front()];
       ears.pop_front();
@@ -1039,6 +1034,7 @@
     {
 
     }
+    return triActual;
   }
 
   bool Room::isPointInTriangle(const sf::Vector2f point, const sf::Vector2f t1, const sf::Vector2f t2, const sf::Vector2f t3)
