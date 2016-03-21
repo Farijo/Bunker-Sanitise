@@ -379,7 +379,7 @@
         }
       }
 
-      loadSpecificRoom();
+      //loadSpecificRoom();
   }
 
   void Room::loadSpecificRoom()
@@ -695,6 +695,14 @@
           }
         }
 
+        // TODO incorrect : tester sur des grandes valeurs
+
+        bool affichage = false;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))affichage=true;
+        for(int i=0;i<numAllVertex;i++)
+          if(affichage)printf("%d %d %f %f\n",i,vertexEnlightened[i],allVertex[i].x,allVertex[i].y);
+        if(affichage)printf("\n\n");
+
         std::vector<std::vector<sf::Vector2f> > shapeList = polygonList(allVertex, vertexEnlightened, numAllVertex);
 
         const sf::Color ombre(80,80,80,100);
@@ -714,9 +722,7 @@
             sf::Vertex point[nbTriVertice];
             for(int j=0;j<nbTriVertice;j++)
               point[j].color = j/3 == 0 ? sf::Color(100,0,0,200) : j/3 == 1 ? sf::Color(0,100,0,200) : j/3 == 2 ? sf::Color(0,0,100,200) : j/3 == 3 ? sf::Color(100,0,100,200) : j/3 == 4 ? sf::Color(0,100,100,200) : sf::Color(100,100,0,200);
-            printf("%d ",nbTriVertice);
             nbTriVertice = triangulateShape(shapeList[i], point);
-            printf("%d\n",nbTriVertice);
             window.draw(point, nbTriVertice, sf::Triangles);
           }
         }
