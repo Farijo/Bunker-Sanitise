@@ -615,7 +615,7 @@
 
       if(isPointInRoom(mouse_pos, wall, size_x, size_y))
       {
-        std::vector<sf::Vector2f> ver = triangleCorner(mouse_pos, realSizeVertex, wall);
+        std::vector<IntersectionPoint> ver = triangleCorner(mouse_pos, realSizeVertex, wall);
 
         /*sf::CircleShape ss(10);
         ss.setOrigin(10,10);
@@ -631,8 +631,8 @@
         polygon[0] = sf::Vertex(mouse_pos, sf::Color(255,0,0,80));
         for(unsigned int i=0;i<ver.size();i++)
         {
-          polygon[i+1] = sf::Vertex(ver[i], sf::Color(255,0,0,80));
-          ss.setPosition(ver[i]);
+          polygon[i+1] = sf::Vertex(ver[i].position, sf::Color(255,0,0,80));
+          ss.setPosition(ver[i].position);
           ss.setFillColor(sf::Color::Yellow);
           if(i==0) ss.setFillColor(sf::Color::Blue);
           window.draw(ss);
@@ -646,7 +646,7 @@
         for(unsigned int i=0;i<ver.size();i++)
         {
           linesd[i*2] = sf::Vertex(mouse_pos, sf::Color::Blue);
-          linesd[i*2+1] = sf::Vertex(ver[i], sf::Color::Blue);
+          linesd[i*2+1] = sf::Vertex(ver[i].position, sf::Color::Blue);
         }
         window.draw(linesd, ver.size()*2, sf::Lines);
 
@@ -654,23 +654,67 @@
         sf::Vector2f allVertex[numAllVertex];
         bool vertexEnlightened[numAllVertex];
 
-        for(unsigned int i=vertices.size()-1;i>=0;i--)
+        /*int index = 0;
+        for(int i=0;i<vertices.size();i++)
         {
-          if(wall[i].pointBelongToEquation(ver[0]))
+          allVertex[index] = vertices[i];
+          vertexEnlightened[index] = false;
+          for(int j=0;ver[j].wall == i;j++)
+          {
+
+          }
+        }*/
+
+        //printf("%d %d %d, %f %f %d\n",vertices.size(),realSizeVertex[(ver[0].wall+1)%vertices.size()].x,realSizeVertex[(ver[0].wall+1)%vertices.size()].y,ver[0].position.x,ver[0].position.y,ver[0].wall);
+
+        int lastWall = ver[0].wall, index = 0;
+        sf::Vector2f diff;
+        allVertex[0] = ver[index++].position;
+        vertexEnlightened[0] = true;
+        for(int i=1;i<numAllVertex;i++)
+        {
+          while(lastWall == ver[index].wall)
+          {
+            diff = allVertex[i-1]-ver[index].position;
+            if((fabs(diff.x)==0)&&(fabs(diff.y)==0))
+              vertexEnlightened[i-1] = true;
+
+            allVertex[i] = ver[index].position;
+            vertexEnlightened[i] = true;
+            i++;
+            index++;
+          }
+          lastWall = (lastWall+1)%vertices.size();
+          diff = allVertex[i-1]-sf::Vector2f(realSizeVertex[lastWall]);
+          vertexEnlightened[i] = false;
+          if((fabs(diff.x)==0)&&(fabs(diff.y)==0))
+            vertexEnlightened[i] = vertexEnlightened[i-1];
+          allVertex[i] = sf::Vector2f(realSizeVertex[lastWall]);
+        }
+
+        bool affichage=sf::Keyboard::isKeyPressed(sf::Keyboard::Return);
+        for(int i=0;i<numAllVertex;i++)
+        {
+          if(affichage)printf("%d %f %f %d\n",i,allVertex[i].x,allVertex[i].y, vertexEnlightened[i]);
+        }
+
+        /*for(unsigned int i=vertices.size()-1;i>=0;i--)
+        {
+          if(wall[i].pointBelongToEquation(ver[0].position))
           {
             beginRoomPoints = i;
             break;
           }
         }
 
-        allVertex[0] = ver[0];
+        allVertex[0] = ver[0].position;
         vertexEnlightened[0] = true;
 
         for(unsigned int i=1;i<numAllVertex;i++)
         {
-          if(wall[beginRoomPoints].pointBelongToEquation(ver[beginLightPoints]))
+          if(wall[beginRoomPoints].pointBelongToEquation(ver[beginLightPoints].position))
           {
-            allVertex[i] = ver[beginLightPoints];
+            allVertex[i] = ver[beginLightPoints].position;
             vertexEnlightened[i] = true;
             beginLightPoints = (beginLightPoints+1)%ver.size();
           }
@@ -693,13 +737,14 @@
               break;
             }
           }
-        }
+        }*/
 
         // TODO incorrect : tester sur des grandes valeurs
 
-        bool affichage = false;
+        //bool affichage = false;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))affichage=true;
-        for(int i=0;i<numAllVertex;i++)
+        affichage=false;
+        for(unsigned int i=0;i<numAllVertex;i++)
           if(affichage)printf("%d %d %f %f\n",i,vertexEnlightened[i],allVertex[i].x,allVertex[i].y);
         if(affichage)printf("\n\n");
 
@@ -783,7 +828,7 @@
     return res;
   }
 
-  std::vector<sf::Vector2f> Room::triangleCorner(const sf::Vector2f mouse_pos, const sf::Vector2u* realSizeVertex, const struct LinearEquation* wall)const
+  std::vector<Room::IntersectionPoint> Room::triangleCorner(const sf::Vector2f mouse_pos, const sf::Vector2u* realSizeVertex, const struct LinearEquation* wall)const
   {
     sf::Vector3f verticesOrdered[vertices.size()];
 
@@ -819,9 +864,9 @@
     return collisionGestion(vertices.size(), intersectionList);
   }
 
-  std::vector<sf::Vector2f> Room::collisionGestion(const unsigned int length, const std::vector<struct IntersectionPoint>* intersectionList)
+  std::vector<Room::IntersectionPoint> Room::collisionGestion(const unsigned int length, const std::vector<struct IntersectionPoint>* intersectionList)
   {
-    std::vector<sf::Vector2f> res;
+    std::vector<IntersectionPoint> res;
     res.reserve(length);
 
     bool validWall[length];
@@ -865,7 +910,7 @@
         {
           if(validWall[intersectionList[i][j].wall])
           {
-            res.push_back(intersectionList[i][j].position);
+            res.push_back(intersectionList[i][j]);
             found=true;
             break;
           }
@@ -883,7 +928,7 @@
           {
             if(validWall[intersectionList[pointBefore][j].wall])
             {
-              res.push_back(intersectionList[pointBefore][j].position);
+              res.push_back(intersectionList[pointBefore][j]);
               found=true;
               break;
             }
@@ -897,8 +942,8 @@
             {
               if(intersectionList[i][j].wall==intersectionList[pointBefore][k].wall)
               {
-                res.push_back(intersectionList[pointBefore][k].position);
-                res.push_back(intersectionList[i][j].position);
+                res.push_back(intersectionList[pointBefore][k]);
+                res.push_back(intersectionList[i][j]);
                 found=true;
                 break;
               }
@@ -908,7 +953,7 @@
           }
         }
       }
-      res.push_back(intersectionList[i].front().position);
+      res.push_back(intersectionList[i].front());
       for(unsigned int j=0;j<length;j++)
         validWall[j]=false;
       validWall[intersectionList[i].front().wall]=true;
