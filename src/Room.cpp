@@ -650,103 +650,43 @@
         }
         window.draw(linesd, ver.size()*2, sf::Lines);
 
-        unsigned int beginRoomPoints, beginLightPoints = 1, numAllVertex = vertices.size()+ver.size();
+        unsigned int numAllVertex = vertices.size()+ver.size(), index = 0;
         sf::Vector2f allVertex[numAllVertex];
         bool vertexEnlightened[numAllVertex];
 
-        /*int index = 0;
-        for(int i=0;i<vertices.size();i++)
-        {
-          allVertex[index] = vertices[i];
-          vertexEnlightened[index] = false;
-          for(int j=0;ver[j].wall == i;j++)
-          {
-
-          }
-        }*/
-
-        //printf("%d %d %d, %f %f %d\n",vertices.size(),realSizeVertex[(ver[0].wall+1)%vertices.size()].x,realSizeVertex[(ver[0].wall+1)%vertices.size()].y,ver[0].position.x,ver[0].position.y,ver[0].wall);
-
-        int lastWall = ver[0].wall, index = 0;
-        sf::Vector2f diff;
-        allVertex[0] = ver[index++].position;
-        vertexEnlightened[0] = true;
-        for(int i=1;i<numAllVertex;i++)
-        {
-          while(lastWall == ver[index].wall)
-          {
-            diff = allVertex[i-1]-ver[index].position;
-            if((fabs(diff.x)==0)&&(fabs(diff.y)==0))
-              vertexEnlightened[i-1] = true;
-
-            allVertex[i] = ver[index].position;
-            vertexEnlightened[i] = true;
-            i++;
-            index++;
-          }
-          lastWall = (lastWall+1)%vertices.size();
-          diff = allVertex[i-1]-sf::Vector2f(realSizeVertex[lastWall]);
-          vertexEnlightened[i] = false;
-          if((fabs(diff.x)==0)&&(fabs(diff.y)==0))
-            vertexEnlightened[i] = vertexEnlightened[i-1];
-          allVertex[i] = sf::Vector2f(realSizeVertex[lastWall]);
-        }
-
         bool affichage=sf::Keyboard::isKeyPressed(sf::Keyboard::Return);
-        for(int i=0;i<numAllVertex;i++)
-        {
-          if(affichage)printf("%d %f %f %d\n",i,allVertex[i].x,allVertex[i].y, vertexEnlightened[i]);
-        }
 
-        /*for(unsigned int i=vertices.size()-1;i>=0;i--)
+        if(affichage)printf("DEBUT\n");
+        for(unsigned int i=0;i<ver.size();i++)
         {
-          if(wall[i].pointBelongToEquation(ver[0].position))
-          {
-            beginRoomPoints = i;
-            break;
-          }
-        }
+          if(affichage)printf("\t vert %f %f\n",ver[i].position.x,ver[i].position.y);
+          allVertex[index] = ver[i].position;
+          vertexEnlightened[index++] = true;
 
-        allVertex[0] = ver[0].position;
-        vertexEnlightened[0] = true;
-
-        for(unsigned int i=1;i<numAllVertex;i++)
-        {
-          if(wall[beginRoomPoints].pointBelongToEquation(ver[beginLightPoints].position))
+          int inext = (i+1)%ver.size();
+          if((ver[i].wall < ver[inext].wall)||(ver[i].wall-1 != ver[inext].wall))
           {
-            allVertex[i] = ver[beginLightPoints].position;
-            vertexEnlightened[i] = true;
-            beginLightPoints = (beginLightPoints+1)%ver.size();
-          }
-          else
-          {
-            allVertex[i] = wall[beginRoomPoints].extremity2;
-            sf::Vector2f diff = allVertex[i]-allVertex[i-1];
-            if(fabs(diff.x)<epsilon && fabs(diff.y)<epsilon)
-              i--;
-            else
-              vertexEnlightened[i] = false;
-            beginRoomPoints = (beginRoomPoints+1)%vertices.size();
-          }
-          if(i>ver.size())
-          {
-            sf::Vector2f diff = allVertex[0]-allVertex[i];
-            if(fabs(diff.x)<epsilon && fabs(diff.y)<epsilon)
+            int wallfin = (ver[inext].wall+1)%vertices.size();
+            if(affichage)printf("from %d to %d in %d\n",(ver[i].wall+1)%vertices.size(),wallfin,vertices.size());
+            for(int j=(ver[i].wall+1)%vertices.size();j!=wallfin;j=(j+1)%vertices.size())
             {
-              numAllVertex=i;
-              break;
+              sf::Vector2f diff1 = ver[i].position - sf::Vector2f(realSizeVertex[j]);
+              sf::Vector2f diff2 = ver[inext].position - sf::Vector2f(realSizeVertex[j]);
+              if((fabs(diff1.x)>epsilon || fabs(diff1.y)>epsilon)&&(fabs(diff2.x)>epsilon || fabs(diff2.y)>epsilon))
+              {
+                if(affichage)printf("\t somm %f %f avant %f %f apres %f %f\n",sf::Vector2f(realSizeVertex[j]).x,sf::Vector2f(realSizeVertex[j]).y,ver[i].position.x,ver[inext].position.y,ver[inext].position.x,ver[i].position.y);
+                allVertex[index] = sf::Vector2f(realSizeVertex[j]);
+                vertexEnlightened[index++] = false;
+              }
             }
           }
-        }*/
+        }
+        numAllVertex = index;
 
-        // TODO incorrect : tester sur des grandes valeurs
-
-        //bool affichage = false;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))affichage=true;
-        affichage=false;
-        for(unsigned int i=0;i<numAllVertex;i++)
-          if(affichage)printf("%d %d %f %f\n",i,vertexEnlightened[i],allVertex[i].x,allVertex[i].y);
-        if(affichage)printf("\n\n");
+        for(int i=0;i<numAllVertex;i++)
+        {
+          //if(affichage)printf("%d %f %f %d\n",i,allVertex[i].x,allVertex[i].y,vertexEnlightened[i]);
+        }
 
         std::vector<std::vector<sf::Vector2f> > shapeList = polygonList(allVertex, vertexEnlightened, numAllVertex);
 
