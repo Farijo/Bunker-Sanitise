@@ -62,9 +62,9 @@ class Room
     protected:
         sf::Vector2u* createRealSizeVertex(const int size_x, const int size_y)const;
         struct LinearEquation* createWall(const sf::Vector2u* realSizeVertex)const;
-        std::vector<IntersectionPoint> triangleCorner(const sf::Vector2f mouse_pos, const sf::Vector2u* realSizeVertex, const struct LinearEquation* wall)const;
         bool isPointInRoom(const sf::Vector2f& point, struct LinearEquation* wall, const int size_x, const int size_y)const;
 
+        static std::vector<IntersectionPoint> triangleCorner(const sf::Vector2f mouse_pos, const sf::Vector2u* realSizeVertex, const struct LinearEquation* wall, const unsigned int nbVertex);
         static std::vector<std::vector<sf::Vector2f> > polygonList(const sf::Vector2f* vertex, const bool* vertexLight, const int nbVertex);
         static std::vector<IntersectionPoint> collisionGestion(const unsigned int length, const std::vector<struct IntersectionPoint>* intersectionList);
         static int triangulateShape(const std::vector<sf::Vector2f>& angles, sf::Vertex* verticeTrianguled);

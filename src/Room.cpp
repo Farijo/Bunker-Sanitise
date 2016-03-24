@@ -615,7 +615,7 @@
 
       if(isPointInRoom(mouse_pos, wall, size_x, size_y))
       {
-        std::vector<IntersectionPoint> ver = triangleCorner(mouse_pos, realSizeVertex, wall);
+        std::vector<IntersectionPoint> ver = triangleCorner(mouse_pos, realSizeVertex, wall, vertices.size());
 
         /*sf::CircleShape ss(10);
         ss.setOrigin(10,10);
@@ -654,12 +654,8 @@
         sf::Vector2f allVertex[numAllVertex];
         bool vertexEnlightened[numAllVertex];
 
-        bool affichage=sf::Keyboard::isKeyPressed(sf::Keyboard::Return);
-
-        if(affichage)printf("DEBUT\n");
         for(unsigned int i=0;i<ver.size();i++)
         {
-          if(affichage)printf("\t vert %f %f\n",ver[i].position.x,ver[i].position.y);
           allVertex[index] = ver[i].position;
           vertexEnlightened[index++] = true;
 
@@ -667,14 +663,12 @@
           if((ver[i].wall < ver[inext].wall)||(ver[i].wall-1 != ver[inext].wall))
           {
             int wallfin = (ver[inext].wall+1)%vertices.size();
-            if(affichage)printf("from %d to %d in %d\n",(ver[i].wall+1)%vertices.size(),wallfin,vertices.size());
             for(int j=(ver[i].wall+1)%vertices.size();j!=wallfin;j=(j+1)%vertices.size())
             {
               sf::Vector2f diff1 = ver[i].position - sf::Vector2f(realSizeVertex[j]);
               sf::Vector2f diff2 = ver[inext].position - sf::Vector2f(realSizeVertex[j]);
               if((fabs(diff1.x)>epsilon || fabs(diff1.y)>epsilon)&&(fabs(diff2.x)>epsilon || fabs(diff2.y)>epsilon))
               {
-                if(affichage)printf("\t somm %f %f avant %f %f apres %f %f\n",sf::Vector2f(realSizeVertex[j]).x,sf::Vector2f(realSizeVertex[j]).y,ver[i].position.x,ver[inext].position.y,ver[inext].position.x,ver[i].position.y);
                 allVertex[index] = sf::Vector2f(realSizeVertex[j]);
                 vertexEnlightened[index++] = false;
               }
@@ -682,11 +676,6 @@
           }
         }
         numAllVertex = index;
-
-        for(int i=0;i<numAllVertex;i++)
-        {
-          //if(affichage)printf("%d %f %f %d\n",i,allVertex[i].x,allVertex[i].y,vertexEnlightened[i]);
-        }
 
         std::vector<std::vector<sf::Vector2f> > shapeList = polygonList(allVertex, vertexEnlightened, numAllVertex);
 
@@ -768,27 +757,27 @@
     return res;
   }
 
-  std::vector<Room::IntersectionPoint> Room::triangleCorner(const sf::Vector2f mouse_pos, const sf::Vector2u* realSizeVertex, const struct LinearEquation* wall)const
+  std::vector<Room::IntersectionPoint> Room::triangleCorner(const sf::Vector2f mouse_pos, const sf::Vector2u* realSizeVertex, const struct LinearEquation* wall, const unsigned int nbVertex)
   {
-    sf::Vector3f verticesOrdered[vertices.size()];
+    sf::Vector3f verticesOrdered[nbVertex];
 
     double mouseAngle = atan2(mouse_pos.y,-mouse_pos.x);
-    for(unsigned int i=0;i<vertices.size();i++)
+    for(unsigned int i=0;i<nbVertex;i++)
     {
       verticesOrdered[i] = sf::Vector3f(realSizeVertex[i].x,realSizeVertex[i].y, 0);
       verticesOrdered[i].z= mouseAngle - atan2(mouse_pos.y-verticesOrdered[i].y,verticesOrdered[i].x-mouse_pos.x);
     }
 
-    std::sort(&verticesOrdered[0], &verticesOrdered[vertices.size()], angle);
+    std::sort(&verticesOrdered[0], &verticesOrdered[nbVertex], angle);
 
-    std::vector<struct IntersectionPoint> intersectionList[vertices.size()];
+    std::vector<struct IntersectionPoint> intersectionList[nbVertex];
 
     // pour tous les angles de la salle
-    for(unsigned int i=0;i<vertices.size();i++)
+    for(unsigned int i=0;i<nbVertex;i++)
     {
       struct LinearEquation mouseVertice(mouse_pos, sf::Vector2f(verticesOrdered[i].x,verticesOrdered[i].y), LinearEquation::DEMIDROITE);
 
-      for(unsigned int j=0;j<vertices.size();j++)
+      for(unsigned int j=0;j<nbVertex;j++)
       {
         sf::Vector2f intersect;
         if((mouseVertice != wall[j]) && (mouseVertice.findIntersection(wall[j], intersect)))
@@ -796,12 +785,11 @@
           int x_diff = mouse_pos.x-intersect.x;
           int y_diff = mouse_pos.y-intersect.y;
           intersectionList[i].push_back(IntersectionPoint(intersect, x_diff*x_diff+y_diff*y_diff, j));
-          //if (bbb)printf("%d %f %f %d %d\n",i,intersect.x,intersect.y,x_diff*x_diff+y_diff*y_diff,j);
         }
       }
       std::sort(intersectionList[i].begin(), intersectionList[i].end());
     }
-    return collisionGestion(vertices.size(), intersectionList);
+    return collisionGestion(nbVertex, intersectionList);
   }
 
   std::vector<Room::IntersectionPoint> Room::collisionGestion(const unsigned int length, const std::vector<struct IntersectionPoint>* intersectionList)
