@@ -58,3 +58,14 @@ void Stage::draw(sf::RenderWindow& window)const
 
   drawMiniMap(window);
 }
+
+void Stage::windowResize(const unsigned int width, const unsigned int height)
+{
+  for(int i=0;i<roomPerSide;i++)
+  {
+    for(int j=0;j<roomPerSide;j++)
+    {
+      rooms[i*roomPerSide+j].windowResize(width, height);
+    }
+  }
+}

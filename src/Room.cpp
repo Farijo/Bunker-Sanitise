@@ -537,7 +537,6 @@
 
   void Room::drawShape(sf::RenderWindow& window)const
   {
-    int size_x=window.getSize().x/(LARGEUR_MIN+LARGEUR_VARIANCE-1), size_y=window.getSize().y/(HAUTEUR_MIN+HAUTEUR_VARIANCE-1);
     sf::RectangleShape tmp(sf::Vector2f(size_x,size_y));
 
     for(int i=0;i<hauteur;i++)
@@ -584,15 +583,13 @@
   {
       drawShape(window);
 
-      int size_x=window.getSize().x/(LARGEUR_MIN+LARGEUR_VARIANCE-1), size_y=window.getSize().y/(HAUTEUR_MIN+HAUTEUR_VARIANCE-1);
-
       static const int delta=1;
       static int mousx=0;
       static int mousy=0;
       static bool left, right, up, down;
 
       sf::Vector2f mouse_pos = window.mapPixelToCoords(sf::Mouse::getPosition(window), window.getView());
-      mouse_pos = sf::Vector2f(mousx, mousy);
+      //mouse_pos = sf::Vector2f(mousx, mousy);
       //printf("%f %f\n",mouse_pos.x,mouse_pos.y);
 
       if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){left=true;}
@@ -610,10 +607,12 @@
       if (up&&sf::Keyboard::isKeyPressed(sf::Keyboard::Z))mousy-=delta;
       if (down&&sf::Keyboard::isKeyPressed(sf::Keyboard::S))mousy+=delta;
 
-      sf::Vector2u* realSizeVertex = createRealSizeVertex(size_x, size_y);
-      struct LinearEquation* wall = createWall(realSizeVertex);
+      sf::Vector2u realSizeVertex[vertices.size()];
+      struct LinearEquation wall[vertices.size()];
+      createRealSizeVertex(realSizeVertex);
+      createWall(realSizeVertex, wall);
 
-      if(isPointInRoom(mouse_pos, wall, size_x, size_y))
+      if(isPointInRoom(mouse_pos, wall))
       {
         std::vector<IntersectionPoint> ver = triangleCorner(mouse_pos, realSizeVertex, wall, vertices.size());
 
@@ -695,44 +694,40 @@
             int nbTriVertice = (shapeList[i].size()-2)*3;
             sf::Vertex point[nbTriVertice];
             for(int j=0;j<nbTriVertice;j++)
-              point[j].color = j/3 == 0 ? sf::Color(100,0,0,200) : j/3 == 1 ? sf::Color(0,100,0,200) : j/3 == 2 ? sf::Color(0,0,100,200) : j/3 == 3 ? sf::Color(100,0,100,200) : j/3 == 4 ? sf::Color(0,100,100,200) : sf::Color(100,100,0,200);
+              point[j].color = ombre;//j/3 == 0 ? sf::Color(100,0,0,200) : j/3 == 1 ? sf::Color(0,100,0,200) : j/3 == 2 ? sf::Color(0,0,100,200) : j/3 == 3 ? sf::Color(100,0,100,200) : j/3 == 4 ? sf::Color(0,100,100,200) : sf::Color(100,100,0,200);
             nbTriVertice = triangulateShape(shapeList[i], point);
             window.draw(point, nbTriVertice, sf::Triangles);
           }
         }
       }
-
-      delete[] realSizeVertex;
-      delete[] wall;
   }
+
+  void Room::windowResize(const unsigned int width, const unsigned int height)
+  {
+    size_x = width/(LARGEUR_MIN+LARGEUR_VARIANCE-1);
+    size_y = height/(HAUTEUR_MIN+HAUTEUR_VARIANCE-1);
+  }
+
 
   bool angle(sf::Vector3f i,sf::Vector3f j)
   {
     return i.z<j.z;
   }
 
-  sf::Vector2u* Room::createRealSizeVertex(int size_x, int size_y)const
+  void Room::createRealSizeVertex(sf::Vector2u* res)const
   {
-    sf::Vector2u* res = new sf::Vector2u[vertices.size()];
-
     for(unsigned int i=0;i<vertices.size();i++)
       res[i] = sf::Vector2u(vertices[i].x*size_x, vertices[i].y*size_y);
-
-    return res;
   }
 
-  struct Room::LinearEquation* Room::createWall(const sf::Vector2u* realSizeVertex)const
+  void Room::createWall(const sf::Vector2u* realSizeVertex, struct Room::LinearEquation* res)const
   {
-    struct LinearEquation* res = new struct LinearEquation[vertices.size()];
-
     unsigned int lastIndex = vertices.size()-1;
     for(unsigned int i=0;i<lastIndex;i++)
     {
       res[i] = LinearEquation(sf::Vector2f(realSizeVertex[i].x,realSizeVertex[i].y), sf::Vector2f(realSizeVertex[i+1].x,realSizeVertex[i+1].y), LinearEquation::SEGMENT);
     }
     res[lastIndex] = LinearEquation(sf::Vector2f(realSizeVertex[lastIndex].x,realSizeVertex[lastIndex].y), sf::Vector2f(realSizeVertex[0].x,realSizeVertex[0].y), LinearEquation::SEGMENT);
-
-    return res;
   }
 
   std::vector<std::vector<sf::Vector2f> > Room::polygonList(const sf::Vector2f* vertex, const bool* vertexLight, const int nbVertex)
@@ -891,7 +886,7 @@
     return res;
   }
 
-  bool Room::isPointInRoom(const sf::Vector2f& point, struct LinearEquation* wall, int size_x, int size_y)const
+  bool Room::isPointInRoom(const sf::Vector2f& point, struct LinearEquation* wall)const
   {
     if(((int)point.x%size_x == 0)||((int)point.y%size_y == 0))
     {

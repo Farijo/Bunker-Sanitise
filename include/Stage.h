@@ -13,6 +13,7 @@ class Stage
         virtual ~Stage();
 
         void draw(sf::RenderWindow& window)const;
+        void windowResize(const unsigned int width, const unsigned int height);
     protected:
         void drawMiniMap(sf::RenderWindow& window)const;
 

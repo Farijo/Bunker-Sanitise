@@ -59,10 +59,11 @@ class Room
         void pathTo(const int x, const int y);
         void drawShape(sf::RenderWindow& window)const;
         void draw(sf::RenderWindow& window)const;
+        void windowResize(const unsigned int width, const unsigned int height);
     protected:
-        sf::Vector2u* createRealSizeVertex(const int size_x, const int size_y)const;
-        struct LinearEquation* createWall(const sf::Vector2u* realSizeVertex)const;
-        bool isPointInRoom(const sf::Vector2f& point, struct LinearEquation* wall, const int size_x, const int size_y)const;
+        void createRealSizeVertex(sf::Vector2u* res)const;
+        void createWall(const sf::Vector2u* realSizeVertex, struct LinearEquation* res)const;
+        bool isPointInRoom(const sf::Vector2f& point, struct LinearEquation* wall)const;
 
         static std::vector<IntersectionPoint> triangleCorner(const sf::Vector2f mouse_pos, const sf::Vector2u* realSizeVertex, const struct LinearEquation* wall, const unsigned int nbVertex);
         static std::vector<std::vector<sf::Vector2f> > polygonList(const sf::Vector2f* vertex, const bool* vertexLight, const int nbVertex);
@@ -73,6 +74,8 @@ class Room
         sf::Texture* tex;
         int hauteur;
         int largeur;
+        unsigned int size_x;
+        unsigned int size_y;
         directions** roomArchitecture;
         std::vector<sf::Vector2u> vertices;
 };

@@ -8,6 +8,7 @@ int main()
     Stage s(3);
 
     sf::RenderWindow window(sf::VideoMode(765, 765), "Bunker Sanitise");
+    s.windowResize(window.getSize().x, window.getSize().y);
 
     while (window.isOpen())
     {
@@ -22,7 +23,10 @@ int main()
                     window.close();
             }
             if (event.type == sf::Event::Resized)
-                window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+            {
+              window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+              s.windowResize(event.size.width, event.size.height);
+            }
         }
 
         window.clear();
