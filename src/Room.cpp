@@ -724,7 +724,7 @@
     return res;
   }
 
-  std::vector<Room::IntersectionPoint> Room::triangleCorner(const sf::Vector2f mouse_pos, const sf::Vector2u* realSizeVertex, const struct LinearEquation* wall, const unsigned int nbVertex)
+  std::vector<Room::IntersectionPoint> Room::triangleCorner(const sf::Vector2f& mouse_pos, const sf::Vector2u* realSizeVertex, const struct LinearEquation* wall, const unsigned int nbVertex)
   {
     sf::Vector3f verticesOrdered[nbVertex];
 
@@ -983,7 +983,7 @@
     return triActual;
   }
 
-  bool Room::isPointInTriangle(const sf::Vector2f point, const sf::Vector2f t1, const sf::Vector2f t2, const sf::Vector2f t3)
+  bool Room::isPointInTriangle(const sf::Vector2f& point, const sf::Vector2f& t1, const sf::Vector2f& t2, const sf::Vector2f& t3)
   {
     double x1, y1, x2, y2, x3, y3;
     x1 = t1.x - point.x;
