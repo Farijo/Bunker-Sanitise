@@ -583,29 +583,7 @@
   {
       drawShape(window);
 
-      static const int delta=1;
-      static int mousx=0;
-      static int mousy=0;
-      static bool left, right, up, down;
-
       sf::Vector2f mouse_pos = window.mapPixelToCoords(sf::Mouse::getPosition(window), window.getView());
-      //mouse_pos = sf::Vector2f(mousx, mousy);
-      //printf("%f %f\n",mouse_pos.x,mouse_pos.y);
-
-      if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){left=true;}
-      if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){right=true;}
-      if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){up=true;}
-      if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){down=true;}
-
-      if (left&&sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){mousx-=delta;left=false;}
-      if (right&&sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){mousx+=delta;right=false;}
-      if (up&&sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){mousy-=delta;up=false;}
-      if (down&&sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){mousy+=delta;down=false;}
-
-      if (left&&sf::Keyboard::isKeyPressed(sf::Keyboard::Q))mousx-=delta;
-      if (right&&sf::Keyboard::isKeyPressed(sf::Keyboard::D))mousx+=delta;
-      if (up&&sf::Keyboard::isKeyPressed(sf::Keyboard::Z))mousy-=delta;
-      if (down&&sf::Keyboard::isKeyPressed(sf::Keyboard::S))mousy+=delta;
 
       sf::Vector2u realSizeVertex[vertices.size()];
       struct LinearEquation wall[vertices.size()];
@@ -616,13 +594,7 @@
       {
         std::vector<IntersectionPoint> ver = triangleCorner(mouse_pos, realSizeVertex, wall, vertices.size());
 
-        /*sf::CircleShape ss(10);
-        ss.setOrigin(10,10);
-        ss.setPosition(mouse_pos);
-        ss.setFillColor(sf::Color::Blue);
-        window.draw(ss);*/
-
-        int fanSize = ver.size()+2;
+        /*int fanSize = ver.size()+2;
 
         sf::CircleShape ss(10);
         ss.setOrigin(10,10);
@@ -647,7 +619,7 @@
           linesd[i*2] = sf::Vertex(mouse_pos, sf::Color::Blue);
           linesd[i*2+1] = sf::Vertex(ver[i].position, sf::Color::Blue);
         }
-        window.draw(linesd, ver.size()*2, sf::Lines);
+        window.draw(linesd, ver.size()*2, sf::Lines);*/
 
         unsigned int numAllVertex = vertices.size()+ver.size(), index = 0;
         sf::Vector2f allVertex[numAllVertex];

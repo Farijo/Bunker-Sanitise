@@ -4,10 +4,10 @@
 #include <SFML/Graphics.hpp>
 #include <queue>
 
-const int HAUTEUR_MIN = 10;
-const int HAUTEUR_VARIANCE = 6;
-const int LARGEUR_MIN = 7;
-const int LARGEUR_VARIANCE = 9;
+const int HAUTEUR_MIN = 4;
+const int HAUTEUR_VARIANCE = 2;
+const int LARGEUR_MIN = 2;
+const int LARGEUR_VARIANCE = 4;
 const double epsilon = 0.1;
 
 class Room
