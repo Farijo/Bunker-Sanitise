@@ -6,8 +6,8 @@
 
 const int HAUTEUR_MIN = 4;
 const int HAUTEUR_VARIANCE = 2;
-const int LARGEUR_MIN = 2;
-const int LARGEUR_VARIANCE = 4;
+const int LARGEUR_MIN = 3;
+const int LARGEUR_VARIANCE = 3;
 const double epsilon = 0.1;
 
 class Room
